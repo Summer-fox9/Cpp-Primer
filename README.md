@@ -3,12 +3,12 @@ C++ 入门学习笔记
 
 C++ 的干货文章在 **微信公众号【不会编程的程序圆】** 上最先发布。
 
-代码在 Code 目录下，学习那一部分知识的代码我已经分类好了。如果你有什么问题或这建议欢迎 issues 或者在公众号后台与我交流。
+代码在 Code 目录下，并且已经分类好了。如果你有什么问题或这建议欢迎 issues 或者在公众号后台与我交流。
 
 
 ## 导航
-- <a herf="https://github.com/hairrrrr/Cpp-Primer/tree/master/Code/Practise">基础语法</a>
-- <a herf="#book">免费获取学习C++必读经典的电子书</a>
+- <a href="https://github.com/hairrrrr/Cpp-Primer/tree/master/Code/Practise">基础语法</a>
+- <a href="#book">免费获取学习C++必读经典的电子书</a>
 
 <br>
 
