@@ -14,9 +14,22 @@ public:
   Age(const char* name, int age)
   {
     _age = age;
-    _name = name;
+    // 申请资源
+    _name = (char*)malloc(sizeof(char) * (strlen(name) + 1));
+    strcpy(_name, name);
   }
 
+  Age(const Age& a)
+  {
+     _name = (char*)malloc(sizeof(char) * (strlen(a._name) + 1));
+     strcpy(_name, a._name);
+  }
+  
+  // 我们先把我们写的拷贝构造函数注释起来，调用系统默认的拷贝构造函数
+  // 发现：两个对象的成员 _name 指向的内容是一样的
+  // 然后取消注释
+  // 发现：两个对象的成员 _name 指像了不同的内容，这就说明，对象 1 中的资源也被对象 2 拷贝了一份
+  // 这就是深拷贝
 
   void print()
   {
@@ -27,12 +40,10 @@ public:
   {
     printf("%p\n", _name);
   }
-  // 我们可以看到，两个对象的 _name 中存放的内容是一样的，也就是那个字符串 "Shepard"
-  // 这就是一种浅拷贝，但是其实这里我们并没有用到拷贝构造，请到 test5.cpp 中进一步查看拷贝构造的情况
 
 
 private:
-  const char* _name;
+  char* _name;
   int _age;
 };
 
