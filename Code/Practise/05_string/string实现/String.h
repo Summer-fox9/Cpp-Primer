@@ -1,17 +1,18 @@
 #pragma once
 
-#pragma warning(disable : 4996)
-
 #include<cstring>
 #include<iostream>
-
-
 
 using namespace std;
 
 class String
 {
 public:
+
+	typedef char* iterator;
+	typedef const char* const_iterator;
+  static const size_t npos;
+
 	// 无参构造
 	String()
 		:_str(new char[16])
@@ -98,8 +99,6 @@ public:
 		return _str;
 	}
 
-	typedef char* iterator;
-	typedef const char* const_iterator;
 
 	iterator begin()
 	{
@@ -131,15 +130,18 @@ public:
 		if (n == _size)
 			return;
 
+    // n 大于 capacity 需要重新申请空间
 		if (n > _capacity)
 		{
 			reserve(n);
 		}
+    // n 大于 _size 小于 _capacity 
 		if (n > _size)
 		{
 			memset(_str + _size, ch, n - _size);
 		}
 
+    // 更新
 		_size = n;
 		_str[_size] = '\0';
 	}
@@ -161,6 +163,164 @@ public:
 		_capacity = n;
 	}
 
+  
+  char& operator[](size_t pos)
+  {
+    if(pos <= _size)
+    {
+      return *(_str + pos);
+    }
+  }
+
+  const char& operator[](size_t pos) const 
+  {
+    if(pos <= _size)
+    {
+      return *(_str + pos);
+    }
+  }
+
+  String& insert(size_t pos, const char* s)
+  {
+    if(pos <= _size && s != nullptr)
+    {
+      size_t len = strlen(s);
+      
+      if(_size + len > _capacity)
+        reserve(_size + len);
+
+      // 移动 [pos, _size] 的元素到 [pos + len, _size + len]
+      size_t end = _size + len; // '\0' 也应该移动
+      
+      // 因为 end 是 size_t（unsigned int） 类型，如果右式 == 0，end 再次自减不会小于 0，这样会造成无限循环
+      // 解决办法就是在判断表达式中不要出现 = 号
+      while(end > pos + len - 1)
+      {
+        _str[end] = _str[end - len];
+        end--;
+      }
+
+      for(size_t i = 0; i < len; i++)
+      {
+        _str[pos + i] = s[i];
+      }
+      
+      _size += len;
+    }
+    return *this;
+  }
+  
+
+  String& insert(size_t pos, size_t n, const char& ch)
+  {
+    if(pos <= _size && n > 0)
+    {
+      if(_size + n > _capacity)
+        reserve(_size + n);
+      size_t end = _size + n;
+      while(end > pos + n - 1)
+      {
+        _str[end] = _str[end - n];
+        end--;
+      }
+
+      for(size_t i = 0; i < n; i++)
+      {
+        _str[pos + i] = ch;
+      }
+
+      _size += n;
+    }
+    return *this;
+  }
+
+
+  String& erase(size_t pos = 0, size_t len = npos)
+  {
+    if(pos > _size)
+      return *this;
+
+    // 删除 pos 后字符串中所有内容
+    // pos 代表字符串 [0, pos - 1] 的内容
+    // len 代表字符串 [pos, pos + len)
+    // 直接将 pos 位置的元素置为 '\0' 即可
+    // 如果缺省 len 调用 erase，len 将会是 size_t 的最大值
+    // 如果此时加上 pos 就会变成一个比较小的值（看 pos 的大小
+    if(pos + len >= _size || len == npos)
+    {
+      _str[pos] = '\0';
+      _size = pos;
+    }
+    else
+    {
+      // [pos + len, _size] 移动到 [pos, ]
+      size_t begin = pos + len;
+      size_t cur = pos;
+      while(begin < _size + 1)
+      {
+        _str[cur++] = _str[begin++];
+      }
+
+      _size -= len;
+    }
+
+    return *this;
+  }
+
+
+  String& operator+=(const String& str)
+  {
+    insert(_size, str._str);
+    return *this;
+  }
+
+  String& operator+=(const char* str)
+  {
+    insert(_size, str);
+    return *this;
+  }
+
+  String& append(const String& str)
+  {
+    insert(_size, str._str);
+    return *this;
+  }
+
+  String& append(const char* str)
+  {
+    insert(_size, str);
+    return *this;
+  }
+
+  void push_back(char ch)
+  {
+    insert(_size, 1, ch);
+  }
+
+  void pop_back()
+  {
+    if(_size != 0)
+    {
+      _str[--_size] = '\0';
+    }
+  }
+
+
+  size_t find(const char* s, size_t pos = 0)
+  {
+    char* tar_str = strstr(_str + pos, s);
+
+    if(tar_str)
+      // 找到的字串的位置偏移等于，字串的首地址减去整个字符串的首地址（注意不要搞乱顺序）
+      return tar_str - _str; 
+    else 
+      return npos;
+  }
+
+  void print(){
+    cout << _str << " " << _size << " " << _capacity << endl;
+  }
+
 
 
 // 观察 string 类对象的成员变量，发现主要有三个
@@ -169,3 +329,51 @@ private:
 	size_t _size;
 	size_t _capacity;
 };
+
+
+const size_t String::npos = -1;
+
+String operator+(const String& left, const String& right)
+{
+  String tmp(left);
+  tmp += right;
+  return tmp;
+}
+
+String operator+(const String& left, const char* s)
+{
+  String tmp(left);
+  tmp += s;
+  return tmp;
+}
+
+String operator+(const char* s, const String& right)
+{
+  String tmp(right);
+  tmp += s;
+  return tmp;
+}
+
+bool operator==(const String& left, const String& right)
+{
+  const char* sl = left.c_str();
+  const char* rl = right.c_str();
+  
+  return strcmp(sl, rl) == 0;
+  
+}
+bool operator>(const String& left, const String& right)
+{
+  const char* sl = left.c_str();
+  const char* rl = right.c_str();
+
+  return strcmp(sl, rl) > 0;
+}
+
+ostream& operator<<(ostream& _cout, const String& s)
+{
+  _cout << s.c_str(); 
+  return _cout;
+}
+
+
