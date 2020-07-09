@@ -127,7 +127,7 @@ void test2()
  */
 void test3()
 {
-	// 会输出地址
+	// 会输出地址,因为 ostream 中的 operator<< 没有重载 C 串类型
 	cout.operator<<("123").operator<<(endl);
 
 	operator<<(cout, "123");
@@ -231,6 +231,88 @@ void test6()
 	ifs.close();
 }
 
+// C++ 文本文件
+void test6p()
+{
+	// 文本格式写文件
+	ofstream text("text.cpp.txt");
+	
+	struct Student s = { "Shepard_Wang", 20, "man" };
+
+	text << s.name << " " << s.age << " " << s.gender << endl;
+
+	text.close();
+
+	ifstream text2("text.cpp.txt");
+	
+	struct Student s2;
+
+	text2 >> s2.name >> s2.age >> s2.gender;
+
+	text2.close();
+}
+
+void test6cpppp()
+{
+	ofstream text("binary.cpp.txt");
+
+	struct Student s = { "Shepard_Wang", 20, "man" };
+
+	text.write((char*)&s, sizeof(s));
+
+	text.close();
+
+	ifstream text2("binary.cpp.txt");
+
+	struct Student s2;
+
+	text2.read((char*)&s2, sizeof(s2));
+
+	text2.close();
+}
+
+// C 语言版文本文件
+void test6pp()
+{
+	FILE* fp = fopen("text.c.txt", "w+");
+
+	struct Student s = { "ShepardWang", 20, "man" };
+
+	fprintf(fp, "%s %d %s", s.name, s.age, s.gender);
+
+	fclose(fp);
+
+	FILE* fp2 = fopen("text.c.txt", "r");
+
+	struct Student s2;
+	
+	// 读取出现错误
+	// s2.name 是 Shepard，遇到空格结束读取
+	fscanf(fp2, "%s%d%s", s2.name, &s2.age, s2.gender);
+
+	fclose(fp2);
+}
+
+// C 语言版二进制文件
+void test6ppp()
+{
+	FILE* fp = fopen("binary.c.txt", "w+");
+
+	struct Student s = { "ShepardWang", 20, "man" };
+
+	fwrite(&s, sizeof(s), 1, fp);
+
+	fclose(fp);
+
+	FILE* fp2 = fopen("binary.c.txt", "r");
+
+	struct Student s2;
+
+	fread(&s2, sizeof(s2), 1, fp2);
+
+	fclose(fp2);
+}
+
 #include<sstream>
 #include<stdlib.h>
 
@@ -263,7 +345,7 @@ void test7()
 
 int main(void)
 {
-	test3();
+	test6cpppp();
 
 	return 0;
 }
