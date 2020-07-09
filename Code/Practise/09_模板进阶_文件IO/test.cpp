@@ -15,15 +15,15 @@ T Add(T& t1, T& t2)
  * 函数模板特化
  * const char*& t1 这个 & 符号必须要写，要和模板保持一致
  */
-//template<>
-//char* Add<char*>(char*& t1, char*& t2)
-//{
-//	char* ret = new char[strlen(t1) + strlen(t2) + 1];
-//	strcpy(ret, t1);
-//	strcat(ret, t2);
-//	
-//	return ret;
-//}
+template<>
+char* Add<char*>(char*& t1, char*& t2)
+{
+	char* ret = new char[strlen(t1) + strlen(t2) + 1];
+	strcpy(ret, t1);
+	strcat(ret, t2);
+	
+	return ret;
+}
 
 /**
  * 特化写起来很麻烦，我们可以直接定义一个 char* 专属的 Add 函数，
@@ -123,7 +123,9 @@ void test2()
 }
 
 /**
- * 问题
+ * 问题 √
+ * http://cplusplus.com/reference/ostream/ostream/operator%3C%3C/
+ * http://cplusplus.com/reference/ostream/ostream/operator-free/
  */
 void test3()
 {
@@ -337,7 +339,7 @@ void test7()
 	string str = ss.str();
 	cout << str << endl;
 	ss.str("");
-	ss.clear();
+	ss.clear(); // 清空状态位
 	double y = 2.5;
 	ss << y;
 	cout << ss.str() << endl;
