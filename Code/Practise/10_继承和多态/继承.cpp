@@ -293,9 +293,81 @@ void test4()
  *
  */
 
+//class A
+//{
+//public:
+//	int _a = 0xa;
+//};
+//
+//class B : public A
+//{
+//public:
+//	int _b = 0xb;
+//};
+//
+//class C : public A
+//{
+//public:
+//	int _c = 0xc;
+//};
+//
+//class D : public C, public B
+//{
+//public:
+//	int _d = 0xd;
+//};
+//
+//void test5()
+//{
+//	D d;
+//
+//	cout << "sizeof(D) = " << sizeof(D) << endl; // 20
+//	/**
+//	 * 这里 D 的大小是 20，是因为 D 中存在两份 A 类中的 _a 成员
+//	 * 因为 B，C 都继承了 A 中的 _a，而 D 继承了 B，C ，因此 D 继承了两份 _a
+//	 */
+//
+//	d.B::_a = 0xaa;
+//
+//}
+
+class A
+{
+public:
+	int _a = 0xa;
+};
+
+class B : virtual public A
+{
+public:
+	int _b = 0xb;
+};
+
+class C : virtual public A
+{
+public:
+	int _c = 0xc;
+};
+
+class D : public B, public C
+{
+public:
+	int _d = 0xd;
+};
+
+void test5()
+{
+	D d;
+
+	cout << "sizeof(D) = " << sizeof(D) << endl; // 24
+
+	//d.B::_a = 0xaa;
+
+}
+
 int main(void)
 {
-	test4();
+	test5();
 	
 
 	return 0;
