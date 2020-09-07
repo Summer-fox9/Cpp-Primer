@@ -48,12 +48,12 @@ struct HashIterator
 		,_ht(ht)
 	{}
 
-	const V& operator*() const 
+	V& operator*() const 
 	{
 		return _node->_value;
 	}
 
-	const V* operator->() const
+	V* operator->() const
 	{
 		return &_node->_value;
 	}
@@ -147,7 +147,7 @@ public:
 		return Iterator(nullptr, this);
 	}
 	
-	bool insert(const V& value)
+	pair<Iterator, bool> insert(const V& value)
 	{
 		// 1. 检查容量
 		checkCapacity();
@@ -166,7 +166,7 @@ public:
 		{
 			// key 已经存在
 			if (hf(kov(value)) == hf(kov(cur->_value)))
-				return false;
+				return make_pair(Iterator(cur, this), false);
 			cur = cur->_next;
 		}
 
@@ -176,7 +176,29 @@ public:
 		_table[idx] = node;
 		_size++;
 
-		return true;
+		return make_pair(Iterator(node, this), true);
+	}
+
+	// 获取素数表中的素数
+	size_t getNewSize()
+	{
+		const int PRIMECOUNT = 28;
+		const size_t primeList[PRIMECOUNT] =
+		{ 53ul, 97ul, 193ul, 389ul, 769ul, 1543ul,
+			3079ul, 6151ul, 12289ul, 24593ul, 49157ul,
+			98317ul, 196613ul, 393241ul, 786433ul, 1572869ul,
+			3145739ul, 6291469ul, 12582917ul, 25165843ul, 50331653ul,
+			100663319ul, 201326611ul, 402653189ul, 805306457ul,
+			1610612741ul,3221225473ul, 4294967291ul,
+		};
+
+		for (int i = 0; i < PRIMECOUNT; i++)
+		{
+			if (primeList[i] > _size)
+				return primeList[i];
+		}
+		
+		return primeList[PRIMECOUNT - 1];
 	}
 
 	void checkCapacity()
@@ -184,13 +206,17 @@ public:
 		keyOfValue kov;
 		HashFun hf;
 
-		// 如果顺序表的大小和当前元素个数相同
+		// 如果顺序表的大小和当前元素个数相同，则需要增容
 		if (_size == _table.size())
 		{			
 			vector<Node*> newTable;
 			
-			newTable.resize((_size == 0) ? 5 : 2 * _size);
+			//newTable.resize((_size == 0) ? 5 : 2 * _size);
 			
+			// 使用素数表作为增容后数组的大小，这样可以减少哈希冲突
+			size_t newSize = getNewSize();
+			newTable.resize(newSize);
+
 			// 转移旧表中的节点
 			for (int i = 0; i < _table.size(); i++)
 			{
