@@ -51,7 +51,7 @@ C++ 的干货文章在 **微信公众号【不会编程的程序圆】** 上最�
 
 ### 类型转换 & 特殊类设计
 
--[代码练习](https://github.com/hairrrrr/Cpp-Primer/tree/master/Code/Practise/15_%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%26%E7%89%B9%E6%AE%8A%E7%B1%BB%E8%AE%BE%E8%AE%A1)
+- [代码练习](https://github.com/hairrrrr/Cpp-Primer/tree/master/Code/Practise/15_%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%26%E7%89%B9%E6%AE%8A%E7%B1%BB%E8%AE%BE%E8%AE%A1)
 
 </div>
 
